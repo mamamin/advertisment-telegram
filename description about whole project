@@ -1,16 +1,15 @@
-  The whole project that we are going throgh is about how to optimize advertisment algorithms to do better advirtisment in telegram application.
-The goal that we try to achive is to show our advertisment to as many people as we can who need our product with spending a fixed amount of money.
-We call them target persons. The number of target persons depends on the number of subscribers that a channel has, the engagment rate of the subscribers 
-with the channel posts and the desire of those subscribers to buy our product.By engagment rate, we mean the number of total reactions,comments and views of a 
-post in a channel in diffrent times in diffrent days of a week.
-To do this, first we should gather some data from diffrent telegram channels. This data includes number of subscribers,engagment rate of subscribers,
-advertisment prices of that channel and the main topic that the channel posts are related to that we call it the community label. 
-Gathering data about engagment rate is so hard because we should gather datas of lots of posts from each channel. So we have trained 
-a neural network model that with some datas from the channel can predict the engagment rate of that channel. The details of this process have come
-as result1.pdf in the repository. 
-The next task that we should do is to find the community labels that are most related to our product. And the last task is to find the overlap of subscribers
-of diffrent channels. Because if we do advertisment in two channel that have some same subscribers, less people have seen our advertisment. This has been done
-by training another. For each of these tasks we have trained diffrent neural networks.
-So we have a very complex model which can do the optimization that we wanted to do on telegram platform and we are going to develop this on instagram 
-and X too. Our system has passed lots of tests and it can be used for diffrent cases of usage. We already have had many customers and have earned 50 million tomans
-from this project.
+The entire project we are currently working on is aimed at optimizing advertisement algorithms to improve advertising within the Telegram application. 
+Our primary goal is to display our advertisements to as many people as possible who require our product while adhering to a fixed budget.
+We refer to these individuals as our "target audience." The number of target individuals is contingent on various factors, such as a channel's subscriber count, 
+the engagement rate of subscribers with channel posts, and the desire of those subscribers to purchase our product. When we mention the "engagement rate,"
+we are referring to the cumulative reactions, comments, and views a post receives within different timeframes and on various days of the week.
+To accomplish this, our first step is to collect data from different Telegram channels. This data includes the number of subscribers, 
+the engagement rate of these subscribers, advertisement prices for each channel, and the main topic related to the channel's posts, which we term the "community label."
+Gathering data on the engagement rate is particularly challenging since it necessitates collecting data from numerous posts on each channel. To address this challenge,
+we've trained a neural network model that can predict the engagement rate of a channel using specific data from that channel. You can find detailed information about
+this process in "result1.pdf" within the repository.
+The subsequent tasks involve identifying community labels that closely align with our product and determining the overlap of subscribers across different channels. 
+Advertising on channels with overlapping subscribers results in reduced exposure to our advertisements. To address these tasks, we've trained distinct neural networks. 
+As a result, we've developed a highly intricate model capable of optimizing the Telegram platform as we originally intended. We also have plans to expand its use to
+Instagram and other platforms. Our system has undergone extensive testing and can cater to a variety of usage scenarios. We have already attracted numerous customers 
+and generated 50 million Tomans in revenue from this project.
