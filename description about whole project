@@ -1,1 +1,16 @@
-  The whole project that we are going throgh is about how to optimize advertisment algorithms to do better advirtisment in telegram application.To do this, first we should gather some data from diffrent telegram channels. 
+  The whole project that we are going throgh is about how to optimize advertisment algorithms to do better advirtisment in telegram application.
+The goal that we try to achive is to show our advertisment to as many people as we can who need our product with spending a fixed amount of money.
+We call them target persons. The number of target persons depends on the number of subscribers that a channel has, the engagment rate of the subscribers 
+with the channel posts and the desire of those subscribers to buy our product.By engagment rate, we mean the number of total reactions,comments and views of a 
+post in a channel in diffrent times in diffrent days of a week.
+To do this, first we should gather some data from diffrent telegram channels. This data includes number of subscribers,engagment rate of subscribers,
+advertisment prices of that channel and the main topic that the channel posts are related to that we call it the community label. 
+Gathering data about engagment rate is so hard because we should gather datas of lots of posts from each channel. So we have trained 
+a neural network model that with some datas from the channel can predict the engagment rate of that channel. The details of this process have come in
+another part of the repository. 
+The next task that we should do is to find the community labels that are most related to our product. And the last task is to find the overlap of subscribers
+of diffrent channels. Because if we do advertisment in two channel that have some same subscribers, less people have seen our advertisment. This has been done
+by training another. For each of these tasks we have trained diffrent neural networks.
+So we have a very complex model which can do the optimization that we wanted to do on telegram platform and we are going to develop this on instagram 
+and X too. Our system has passed lots of tests and it can be used for diffrent cases of usage. We already have had many customers and have earned 50 million tomans
+from this project.
