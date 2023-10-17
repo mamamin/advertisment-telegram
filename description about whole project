@@ -6,8 +6,8 @@ post in a channel in diffrent times in diffrent days of a week.
 To do this, first we should gather some data from diffrent telegram channels. This data includes number of subscribers,engagment rate of subscribers,
 advertisment prices of that channel and the main topic that the channel posts are related to that we call it the community label. 
 Gathering data about engagment rate is so hard because we should gather datas of lots of posts from each channel. So we have trained 
-a neural network model that with some datas from the channel can predict the engagment rate of that channel. The details of this process have come in
-another part of the repository. 
+a neural network model that with some datas from the channel can predict the engagment rate of that channel. The details of this process have come
+as result1.pdf in the repository. 
 The next task that we should do is to find the community labels that are most related to our product. And the last task is to find the overlap of subscribers
 of diffrent channels. Because if we do advertisment in two channel that have some same subscribers, less people have seen our advertisment. This has been done
 by training another. For each of these tasks we have trained diffrent neural networks.
