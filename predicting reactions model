@@ -1,0 +1,115 @@
+import numpy as np
+import pandas as pd
+import tensorflow as tf
+import math
+from sklearn.model_selection import train_test_split
+import matplotlib.pyplot as plt
+df1=pd.read_excel("your_file.xlsx")
+community_labels=['general', 'engineering', 'technology', 'programming', 'movie', 'university', 'love',
+                  'music', 'student','book', 'food', 'dance', 'photography', 'health', 'money', 'country', 
+                  'sport', 'spiritual', 'school', 'language', 'shop']
+columns=df1.columns.to_list()
+features=[]
+number_of_reactions=[]
+for i in range(87584):
+    print(i)
+    x=0
+    my_feature=[]
+    if(not(math.isnan(df1.at[i,"total number of reactions"]) or df1.at[i,"total number of reactions"]==0)):
+        my_feature.append(df1.at[i,"image"])
+        my_feature.append(df1.at[i,"link"])
+        my_feature.append(df1.at[i,"video"])
+        my_feature.append(df1.at[i,"audio"])
+        my_feature.append(df1.at[i,"gif"])
+        my_feature.append(df1.at[i,"Saturday"])
+        my_feature.append(df1.at[i,"Sunday"])
+        my_feature.append(df1.at[i,"Monday"])
+        my_feature.append(df1.at[i,"Tuesday"])
+        my_feature.append(df1.at[i,"Wednesday"])
+        my_feature.append(df1.at[i,"Thursday"])
+        my_feature.append(df1.at[i,"Friday"])
+        for j in range(len(community_labels)):
+            my_feature.append(df1.at[i,community_labels[j]])
+        for j in range(96):
+            my_feature.append(df1.at[i,"Time "+str(j+1)])
+        for j in range(11,86):
+            my_feature.append(df1.at[i,columns[j]])
+        my_feature.append(df1.at[i,"average daily posts"])
+        my_feature.append(df1.at[i,"average interval post"])
+        my_feature.append(df1.at[i,"subscribers"])
+        for j in range(len(my_feature)):
+            if(math.isnan(my_feature[j])):
+                x=1
+        if(x==0):
+            my_feature=np.array(my_feature)
+            features.append(my_feature)
+            number_of_reactions.append(df1.at[i,"total number of reactions"])
+features2=[]
+number_of_reactions2=[]
+df2=pd.read_excel("your_file1.xlsx")
+for i in range(81242):
+    print(i)
+    my_feature=[]
+    if(not(math.isnan(df2.at[i,"total number of reactions"]) or df2.at[i,"total number of reactions"]==0)):
+        my_feature.append(df2.at[i,"image"])
+        my_feature.append(df2.at[i,"link"])
+        my_feature.append(df2.at[i,"video"])
+        my_feature.append(df2.at[i,"audio"])
+        my_feature.append(df2.at[i,"gif"])
+        my_feature.append(df2.at[i,"Saturday"])
+        my_feature.append(df2.at[i,"Sunday"])
+        my_feature.append(df2.at[i,"Monday"])
+        my_feature.append(df2.at[i,"Tuesday"])
+        my_feature.append(df2.at[i,"Wednesday"])
+        my_feature.append(df2.at[i,"Thursday"])
+        my_feature.append(df2.at[i,"Friday"])
+        for label in community_labels:
+            my_feature.append(df2.at[i,label])
+        for j in range(96):
+            my_feature.append(df2.at[i,"Time "+str(j+1)])
+        for j in range(11,86):
+            my_feature.append(df2.at[i,columns[j]])
+        my_feature.append(df2.at[i,"average daily posts"])
+        my_feature.append(df2.at[i,"average interval post"])
+        my_feature.append(df2.at[i,"subscribers"])
+        for j in range(len(my_feature)):
+            if(math.isnan(my_feature[j])):
+                x=1
+        if(x==0):
+            features2.append(my_feature)
+            number_of_reactions2.append(df2.at[i,"total number of reactions"])
+X_train,X_test,y_train,y_test=train_test_split(features,number_of_reactions,test_size=0.2,shuffle=True,random_state=1)
+X_train2,X_test2,y_train2,y_test2=train_test_split(features2,number_of_reactions2,test_size=0.2,shuffle=True,random_state=1)
+X_train.extend(X_train2)
+y_train.extend(y_train2)
+X_test.extend(X_test2)
+y_test.extend(y_test2)
+X_train=np.array(X_train)
+X_test=np.array(X_test)
+y_train=np.array(y_train)
+y_test=np.array(y_test)
+layer1=tf.keras.layers.Dense(64,activation=tf.keras.layers.LeakyReLU(alpha=0.1))
+layer2=tf.keras.layers.Dense(16,activation=tf.keras.layers.LeakyReLU(alpha=0.1))
+layer3=tf.keras.layers.Dense(1,activation=tf.keras.layers.LeakyReLU(alpha=0.1))
+model=tf.keras.models.Sequential([layer1,layer2,layer3])
+checkpoint_path="cp.ckpt"
+cp_callbacks=tf.keras.callbacks.ModelCheckpoint(filepath=checkpoint_path,save_weights_only=True,verbose=1)
+model.load_weights(checkpoint_path)
+model.compile(loss="mse",optimizer=tf.keras.optimizers.Adam(learning_rate=0.0000001))
+history=model.fit(X_train,y_train,epochs=200,callbacks=cp_callbacks,batch_size=1500,validation_data=(X_test,y_test))
+print(model.summary())
+plt.figure(figsize=(10, 5))
+plt.plot(history.history['loss'], label='Training Loss')
+plt.plot(history.history['val_loss'], label='Validation Loss')
+plt.xlabel('Epochs')
+plt.ylabel('Loss')
+plt.title('Training and Validation Loss')
+plt.legend()
+plt.show()
+loss = model.evaluate(X_test, y_test)
+predictions=model.predict(X_test)
+print("Evaluation Loss:", loss)
+x=0
+for i in range(len(X_test)):
+   x=x+abs(predictions[i]-y_test[i])/y_test[i] 
+print("Accuracy : ",100*x/len(X_test))
