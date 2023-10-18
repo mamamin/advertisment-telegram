@@ -1,5 +1,5 @@
 # a project to optimize advertisment in telgram platform
-The entire project we are currently working on is aimed at optimizing advertisement algorithms to improve advertising within the Telegram application. 
+## The entire project we are currently working on is aimed at optimizing advertisement algorithms to improve advertising within the Telegram application. 
 Our primary goal is to display our advertisements to as many people as possible who require our product while adhering to a fixed budget.
 We refer to these individuals as our "target audience." The number of target individuals is contingent on various factors, such as a channel's subscriber count, 
 the engagement rate of subscribers with channel posts, and the desire of those subscribers to purchase our product. When we mention the "engagement rate,"
