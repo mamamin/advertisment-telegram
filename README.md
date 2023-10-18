@@ -3,8 +3,9 @@
 The entire project we are currently working on is aimed at optimizing advertisement algorithms to improve advertising within the Telegram application. 
 Our primary goal is to display our advertisements to as many people as possible who require our product while adhering to a fixed budget.
 We refer to these individuals as our "target audience." The number of target individuals is contingent on various factors, such as a channel's subscriber count, 
-the engagement rate of subscribers with channel posts, and the desire of those subscribers to purchase our product. When we mention the "engagement rate,"
-we are referring to the cumulative reactions, comments, and views a post receives within different timeframes and on various days of the week.
+the engagement rate of subscribers with channel posts, and the desire of those subscribers to purchase our product.
+## What is the engagment rate?
+When we mention the "engagement rate,"we are referring to the cumulative reactions, comments, and views a post receives within different timeframes and on various days of the week.
 To accomplish this, our first step is to collect data from different Telegram channels. This data includes the number of subscribers, 
 the engagement rate of these subscribers, advertisement prices for each channel, and the main topic related to the channel's posts, which we term the "community label."
 Gathering data on the engagement rate is particularly challenging since it necessitates collecting data from numerous posts on each channel. To address this challenge,
