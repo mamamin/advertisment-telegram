@@ -1,0 +1,123 @@
+from telethon.sync import TelegramClient,utils
+import telethon
+import pandas as pd
+import emoji
+from telethon import functions
+from datetime import datetime
+import datetime
+import gc
+import re
+from openpyxl import load_workbook
+from openpyxl.utils.dataframe import dataframe_to_rows
+api_id=*******
+api_hash=*********
+channels_data=pd.read_excel("channels_data.xlsx")
+messages_data=pd.read_excel("message_datas.xlsx")
+gc.enable()
+with TelegramClient('name', api_id, api_hash) as client:
+    for i in range(353,410):
+        channel_id=channels_data.at[i,"ID Channel"]
+        print("Channel ID : ",channel_id)
+        u=0
+        try:
+            channel = client.get_entity(channel_id)
+            if utils.get_display_name(channel) == 'NotFound':
+                u=1
+                channels_data.at[i,"id changed"]=1
+            else:
+                u=0
+                channels_data.at[i,"id changed"]=0
+        except ValueError:
+            u=1
+            channels_data.at[i,"id changed"]=1
+        channels_data.to_excel('channels_data.xlsx', index=False)
+        if(u==0):
+            chat=client.get_input_entity(channel_id)
+            messages =client.iter_messages(chat,limit=30000) 
+            x=0
+            y=0
+            for message in messages:
+                empty_row=0
+                x=x+1
+                print("Message number :",x)
+                if(message.date.year>2022 and message.date.month>6):
+                    if(not(message.date.month==9 and message.date.day>15)):
+                        y=y+1
+                        empty_row = pd.DataFrame(columns=messages_data.columns)
+                        empty_row.at[0,"Channel ID"]=channel_id
+                        empty_row.at[0,"Message ID"]=message.id
+                        empty_row.at[0,"Views"]=message.views
+                        empty_row.at[0,"Date"]=message.date.date()
+                        time_delta = datetime.timedelta(hours=3, minutes=30)
+                        shifted_datetime = message.date + time_delta
+                        empty_row.at[0,"Time"]=shifted_datetime.time()
+                        empty_row.at[0,"Message text"]=message.text
+                        empty_row["image"]=0
+                        empty_row["video"]=0
+                        empty_row["audio"]=0
+                        empty_row["gif"]=0
+                        empty_row["poll"]=0
+                        empty_row["link"]=0
+                        if(message.media!=None):
+                            empty_row["image"]=1  
+                            if(type(message.media)==telethon.tl.types.MessageMediaDocument):
+                                if hasattr(message.media, 'document'):
+                                    if(message.media.document.mime_type.startswith('video/')):
+                                        empty_row["video"]=1
+                                        empty_row["image"]=0
+                                    if(message.media.document.mime_type.startswith('audio/')):
+                                        empty_row["audio"]=1
+                                        empty_row["image"]=0
+                                    if(message.media.document.mime_type.startswith('image/gif')):
+                                        empty_row["gif"]=1
+                                        empty_row["image"]=0
+                        if(message.poll!=None):
+                            if(message.media.poll.answers[0]==None):
+                                result = client(functions.messages.SendVoteRequest(peer=channel_id,msg_id=message.id,options=[b'0']))
+                            empty_row["image"]=0
+                            empty_row["total voters"]=message.poll.results.total_voters
+                            empty_row["poll"]=1
+                            empty_row["poll question"]=message.media.poll.question
+                            if(message.media.poll.multiple_choice):
+                                empty_row["multiple answer"]=1
+                            for i in range(len(message.media.poll.answers)):
+                                empty_row["answer "+str(i+1)]=message.media.poll.answers[i].text
+                                if(message.media.results.results!=None):
+                                    empty_row["voters "+str(i+1)]=message.media.results.results[i].voters
+                                if(i==0):
+                                    empty_row["voters 1"]=empty_row["voters 1"]-1
+                        column_names = messages_data.columns.tolist()
+                        reactions=message.reactions
+                        z=0
+                        if(reactions!=None):
+                            for j in range(11,84):
+                                y=0
+                                for k in range(len(reactions.results)):
+                                    if(emoji.demojize(reactions.results[k].reaction.emoticon)==column_names[j]):
+                                        empty_row[column_names[j]]=reactions.results[k].count
+                                        z=z+reactions.results[k].count
+                                        y=1
+                                        break
+                                if(y==0):
+                                    empty_row[column_names[j]]=0
+                        empty_row["total number of reactions"]=z
+                        if(message.replies!=None):
+                            empty_row["number of comments"]=message.replies.replies
+                        url_pattern = r'https?://\S+|www\.\S+'
+                        if(message.text!=None):
+                            urls = re.findall(url_pattern, message.text)
+                            if(len(urls)>0):
+                                empty_row["link"]=1
+                        messages_data=pd.concat([empty_row, messages_data], ignore_index=True)
+            messages_data.to_excel('message_datas.xlsx', index=False)
+            if(y>0):
+                del channel_id
+                del chat
+                del messages
+                del empty_row
+                del reactions
+                del column_names
+                gc.collect()
+            else:
+                channels_data.at[i,"id changed"]=1
+                channels_data.to_excel('channels_data.xlsx', index=False)
