@@ -1,0 +1,51 @@
+from telethon.sync import TelegramClient,utils
+import telethon
+import pandas as pd
+import emoji
+api_id=********
+api_hash=****************
+channels_data=pd.read_excel("channels_data.xlsx")
+with TelegramClient('name', api_id, api_hash) as client:
+    for i in range(264,270):
+        channel_id=channels_data.at[i,"ID Channel"]
+        print("Channel ID : ",channel_id)
+        u=0
+        try:
+            channel = client.get_entity(channel_id)
+            if utils.get_display_name(channel) == 'NotFound':
+                u=1
+                channels_data.at[i,"id changed"]=1
+            else:
+                u=0
+                channels_data.at[i,"id changed"]=0
+        except ValueError:
+            u=1
+            channels_data.at[i,"id changed"]=1
+        channels_data.to_excel('channels_data.xlsx', index=False)
+        if(u==0):
+            res = client(telethon.tl.functions.channels.GetFullChannelRequest(channel=channel_id))
+            channel_info = res.to_dict()
+            count = channel_info['full_chat']['participants_count']
+            bio= res.full_chat.about
+            channel_name=res.chats[0].title
+            column_names = channels_data.columns.tolist()
+            for j in range(9,84):
+                channels_data.at[i,column_names[j]]=0
+            if(res.full_chat.available_reactions!=None):
+                if(type(res.full_chat.available_reactions)==telethon.tl.types.ChatReactionsAll):
+                    for j in range(9,84):
+                        channels_data.at[i,column_names[j]]=1
+                else:  
+                    for reaction in (res.full_chat.available_reactions.reactions):
+                        x=0
+                        for j in range(9,84):
+                            if(emoji.demojize(reaction.emoticon)==column_names[j]):
+                                channels_data.at[i,column_names[j]]=1
+                                x=1
+                                break
+                        if(x==0):
+                            print("error : ",emoji.demojize(reaction.emoticon))        
+            channels_data.at[i,"#Subscribers"]=count
+            channels_data.at[i,"Bio"]=bio
+            channels_data.at[i,"Channel Name"]=channel_name
+    channels_data.to_excel('channels_data.xlsx', index=False)        
