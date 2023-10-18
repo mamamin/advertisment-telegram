@@ -1,0 +1,100 @@
+import pandas as pd
+import numpy as np
+import math
+# part 1
+messages_data=pd.read_excel("your_file1.xlsx")
+channels_data=pd.read_excel("channels_data.xlsx")
+j=81241
+for i in range(72,237):
+    print("channel :",i)
+    message_per_day=np.zeros(12)
+    z=0
+    x=True 
+    channel_id=channels_data.at[i,"ID Channel"]
+    while(x and j>=0):
+        print(j)
+        if(messages_data.at[j,"Channel ID"]==channel_id):
+            hour=int(messages_data.at[j,"Time"][:messages_data.at[j,"Time"].index(":")])
+            message_per_day[math.floor(hour/2)]=message_per_day[math.floor(hour/2)]+1
+            j=j-1
+            z=z+1
+        else:
+            x=False
+    channels_data.at[i,"average number of posts per day"]=z/77
+    for k in range(12):
+        channels_data.at[i,"posts "+str(2*k)+"-"+str(2*(k+1))]=message_per_day[k]/77
+channels_data.to_excel('channels_data.xlsx', index=False)
+# part 2
+df1=pd.read_excel("your_file.xlsx")  
+for i in range(87584):    
+    print("message : ",i)
+    hour=int(df1.at[i,"Time"][:df1.at[i,"Time"].index(":")])
+    minute=int(df1.at[i,"Time"][df1.at[i,"Time"].index(":")+1:][:df1.at[i,"Time"][df1.at[i,"Time"].index(":")+1:].index(":")])
+    my_time=4*hour+math.floor(minute/15)+1
+    for j in range(96):
+        if(j+1==my_time):
+            df1.at[i,"Time "+str(j+1)]=1
+        else:
+            df1.at[i,"Time "+str(j+1)]=0
+df1.to_excel("your_file.xlsx",index=False)
+# part 3
+df1=pd.read_excel("your_file1.xlsx")  
+for i in range(81241):    
+    print("message : ",i)
+    day_number=((df1.at[i,"Date"].month-7)*31)+df1.at[i,"Date"].day
+    if(day_number%7==1):
+        df1.at[i,"Saturday"]=1
+    else:
+        df1.at[i,"Saturday"]=0
+    if(day_number%7==2):
+        df1.at[i,"Sunday"]=1
+    else:
+        df1.at[i,"Sunday"]=0
+    if(day_number%7==3):
+        df1.at[i,"Monday"]=1
+    else:
+        df1.at[i,"Monday"]=0
+    if(day_number%7==4):
+        df1.at[i,"Tuesday"]=1
+    else:
+        df1.at[i,"Tuesday"]=0
+    if(day_number%7==5):
+        df1.at[i,"Wednesday"]=1
+    else:
+        df1.at[i,"Wednesday"]=0
+    if(day_number%7==6):
+        df1.at[i,"Thursday"]=1
+    else:
+        df1.at[i,"Thursday"]=0
+    if(day_number%7==0):
+        df1.at[i,"Friday"]=1
+    else:
+        df1.at[i,"Friday"]=0
+df1.to_excel("your_file1.xlsx",index=False)
+# part 4
+messages_data=pd.read_excel("your_file1.xlsx")
+channels_data=pd.read_excel("channels_data.xlsx")
+community_labels=['general', 'engineering', 'technology', 'programming', 'movie', 'university', 'love',
+                  'music', 'student','book', 'food', 'dance', 'photography', 'health', 'money', 'country', 
+                  'sport', 'spiritual', 'school', 'language', 'shop']
+j=81241
+for i in range(72,210):
+    print("channel :",i)
+    x=True 
+    channel_id=channels_data.at[i,"ID Channel"]
+    while(x and j>=0):
+        print(81241-j)
+        if(messages_data.at[j,"Channel ID"]==channel_id):
+            messages_data.at[j,"subscribers"]=channels_data.at[i,"#Subscribers"]
+            messages_data.at[j,"average daily posts"]=channels_data.at[i,"average number of posts per day"]
+            hour=int(messages_data.at[j,"Time"][:messages_data.at[j,"Time"].index(":")])
+            messages_data.at[j,"average interval post"]=channels_data.at[i,"posts "+str(2*math.floor(hour/2))+"-"+str(2*math.floor(hour/2)+2)]
+            for label in(community_labels):
+                if(label==channels_data.at[i,"Community Label"]):
+                    messages_data.at[j,label]=1
+                else:
+                    messages_data.at[j,label]=0
+            j=j-1
+        else:
+            x=False
+messages_data.to_excel('your_file1.xlsx', index=False)
